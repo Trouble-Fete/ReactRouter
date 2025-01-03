@@ -1,14 +1,13 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import App from "./App";
 
-// page components
-
+// Pages
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Article from "./pages/Article";
+import Article from "./pages/Article"; // Correction ici : on importe le bon composant Article
 
+// Données des articles
 const allData = [
 	{
 		id: 1,
@@ -33,8 +32,7 @@ const getSomeData = (id: number) => {
 	return allData.find((article) => article.id === id) as Data | null;
 };
 
-// router creation
-
+// 🗺️ Configuration du routeur
 const router = createBrowserRouter([
 	{
 		element: <App />,
@@ -52,16 +50,20 @@ const router = createBrowserRouter([
 				element: <Article />,
 				loader: ({ params }) => {
 					const idAsInt = Number.parseInt(params.id ?? "0");
+					const data = getSomeData(idAsInt);
 
-					return getSomeData(idAsInt);
+					if (!data) {
+						throw new Response("Not Found", { status: 404 });
+					}
+
+					return data;
 				},
 			},
 		],
 	},
 ]);
 
-// rendering
-
+// 🚀 Rendu de l'application
 const rootElement = document.getElementById("root");
 
 if (rootElement != null) {
